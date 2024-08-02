@@ -16,6 +16,8 @@ import org.gradle.api.artifacts.repositories.UrlArtifactRepository;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -28,6 +30,7 @@ import javax.inject.Inject;
 
 public class LibbyTask extends DefaultTask {
 
+    private static final Logger log = LoggerFactory.getLogger(LibbyTask.class);
     private final Configuration customScope;
     private final Project project;
 
@@ -94,13 +97,18 @@ public class LibbyTask extends DefaultTask {
 
         writer.array("repositories");
 
+        int checked = 0;
         for (var repository : project.getRepositories()) {
+            checked++;
+            log.info("Checking repo {}", repository);
             if (repository instanceof UrlArtifactRepository urlRepo) {
                 var path = urlRepo.getUrl().toString();
                 if (!path.startsWith("http")) continue;
+                log.info("Adding repo {}", repository);
                 writer.value(path);
             }
         }
+        log.info("Checked {} repos", checked);
 
         // End repositories array
         writer.end();
