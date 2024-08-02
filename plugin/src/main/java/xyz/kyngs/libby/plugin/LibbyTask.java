@@ -12,6 +12,7 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
+import org.gradle.api.artifacts.repositories.UrlArtifactRepository;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
@@ -94,8 +95,8 @@ public class LibbyTask extends DefaultTask {
         writer.array("repositories");
 
         for (var repository : project.getRepositories()) {
-            if (repository instanceof MavenArtifactRepository maven) {
-                var path = maven.getUrl().toString();
+            if (repository instanceof UrlArtifactRepository urlRepo) {
+                var path = urlRepo.getUrl().toString();
                 if (!path.startsWith("http")) continue;
                 writer.value(path);
             }
